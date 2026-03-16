@@ -1,5 +1,4 @@
 import { neon } from '@neondatabase/serverless';
-import * as dotenv from 'dotenv';
 
 // Load environment variables if needed, but since we are in the project
 // we can assume DATABASE_URL might be in the environment or we can try to find it.
