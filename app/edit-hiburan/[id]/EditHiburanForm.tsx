@@ -3,6 +3,9 @@
 import { useState } from "react";
 import { editHiburan } from "@/app/lib/actions";
 import Link from "next/link";
+import { Input } from "@/components/ui/Input";
+import { Select } from "@/components/ui/Select";
+import { Button } from "@/components/ui/Button";
 
 interface EditHiburanFormProps {
   id: number;
@@ -18,14 +21,39 @@ interface EditHiburanFormProps {
 
 export default function EditHiburanForm({ id, item }: EditHiburanFormProps) {
   const [error, setError] = useState<string | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<{ tipe?: string; nama?: string; link?: string; pemilik?: string }>({});
   const [loading, setLoading] = useState(false);
+
+  const validate = (formData: FormData) => {
+    const errors: { tipe?: string; nama?: string; link?: string; pemilik?: string } = {};
+    const tipe = formData.get("tipe") as string;
+    const nama = formData.get("nama") as string;
+    const link = formData.get("link") as string;
+    const pemilik = formData.get("pemilik") as string;
+
+    if (!tipe) errors.tipe = "TIPE TIDAK BOLEH KOSONG!";
+    if (!nama) errors.nama = "NAMA TIDAK BOLEH KOSONG!";
+    if (!link) {
+      errors.link = "LINK TIDAK BOLEH KOSONG!";
+    } else {
+        try { new URL(link); } catch { errors.link = "FORMAT URL TIDAK VALID!"; }
+    }
+    if (!pemilik) errors.pemilik = "PEMILIK TIDAK BOLEH KOSONG!";
+
+    setFieldErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setLoading(true);
     setError(null);
+    setFieldErrors({});
 
     const formData = new FormData(event.currentTarget);
+    
+    if (!validate(formData)) return;
+
+    setLoading(true);
     const result = await editHiburan(id, formData);
 
     if (result?.error) {
@@ -35,112 +63,92 @@ export default function EditHiburanForm({ id, item }: EditHiburanFormProps) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 text-black">
-      <div>
-        <label htmlFor="tipe" className="block text-sm font-medium text-gray-700">
-          Tipe Hiburan
-        </label>
-        <input
-          type="text"
+    <form onSubmit={handleSubmit} noValidate className="space-y-6 text-black">
+      {error && (
+        <div className="mb-6 border-2 border-black bg-red-100 p-3 text-[10px] md:text-xs font-black uppercase text-red-600">
+          [SYSTEM ERROR]: {error}
+        </div>
+      )}
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <Input
+          label="Module Type"
           name="tipe"
           id="tipe"
           defaultValue={item.tipe}
-          required
-          placeholder="Contoh: Anime, Manga, Game"
-          className="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+          disabled={loading}
+          error={fieldErrors.tipe}
+          onChange={() => fieldErrors.tipe && setFieldErrors(prev => ({ ...prev, tipe: undefined }))}
+          placeholder="Anime / Game / Movie"
         />
-      </div>
 
-      <div>
-        <label htmlFor="nama" className="block text-sm font-medium text-gray-700">
-          Nama Hiburan
-        </label>
-        <input
-          type="text"
+        <Input
+          label="Item Name"
           name="nama"
           id="nama"
           defaultValue={item.nama}
-          required
-          placeholder="Contoh: One Piece"
-          className="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+          disabled={loading}
+          error={fieldErrors.nama}
+          onChange={() => fieldErrors.nama && setFieldErrors(prev => ({ ...prev, nama: undefined }))}
+          placeholder="One Piece / Elden Ring"
         />
       </div>
 
-      <div>
-        <label htmlFor="link" className="block text-sm font-medium text-gray-700">
-          Link Hiburan
-        </label>
-        <input
-          type="url"
-          name="link"
-          id="link"
-          defaultValue={item.link}
-          required
-          placeholder="Contoh: https://example.com"
-          className="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
-        />
-      </div>
+      <Input
+        label="Source Link"
+        name="link"
+        id="link"
+        type="url"
+        defaultValue={item.link}
+        disabled={loading}
+        error={fieldErrors.link}
+        onChange={() => fieldErrors.link && setFieldErrors(prev => ({ ...prev, link: undefined }))}
+        placeholder="HTTPS://EXAMPLE.COM"
+      />
 
-      <div>
-        <label htmlFor="pemilik" className="block text-sm font-medium text-gray-700">
-          Nama Pemilik
-        </label>
-        <input
-          type="text"
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <Input
+          label="Owner Sign"
           name="pemilik"
           id="pemilik"
           defaultValue={item.pemilik}
-          required
-          placeholder="Contoh: Franz"
-          className="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+          disabled={loading}
+          error={fieldErrors.pemilik}
+          onChange={() => fieldErrors.pemilik && setFieldErrors(prev => ({ ...prev, pemilik: undefined }))}
+          placeholder="Franz / User 01"
         />
-      </div>
 
-      <div>
-        <label htmlFor="status" className="block text-sm font-medium text-gray-700">
-          Status Hiburan
-        </label>
-        <select
+        <Select
+          label="Progress Status"
           name="status"
           id="status"
           defaultValue={item.status}
-          className="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 outline-none transition-all bg-white"
-        >
-          <option value="belummulai">Belum Mulai</option>
-          <option value="sedangdalamprogres">Sedang dalam Progres</option>
-          <option value="selesai">Selesai</option>
-        </select>
-      </div>
-
-      <div>
-        <label htmlFor="komentar" className="block text-sm font-medium text-gray-700">
-          Komentar (Opsional)
-        </label>
-        <textarea
-          name="komentar"
-          id="komentar"
-          defaultValue={item.komentar}
-          placeholder="Tambahkan catatan atau komentar..."
-          rows={3}
-          className="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 outline-none transition-all bg-white"
-        ></textarea>
-      </div>
-
-      {error && <p className="text-sm text-red-600 font-medium">{error}</p>}
-
-      <div className="flex flex-col gap-4">
-        <button
-          type="submit"
           disabled={loading}
-          className="w-full py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:bg-blue-300 transition-colors font-semibold"
-        >
-          {loading ? "Menyimpan..." : "Simpan Perubahan"}
-        </button>
-        <Link
-          href="/dashboard"
-          className="w-full py-2 text-center text-blue-600 border border-blue-600 rounded-md hover:bg-blue-50 transition-colors font-medium"
-        >
-          Batal
+          options={[
+            { value: "belummulai", label: "BELUM MULAI" },
+            { value: "sedangdalamprogres", label: "SEDANG PROGRES" },
+            { value: "selesai", label: "SELESAI" },
+          ]}
+        />
+      </div>
+
+      <Input
+        label="Log Comment (Optional)"
+        name="komentar"
+        id="komentar"
+        as="textarea"
+        defaultValue={item.komentar}
+        disabled={loading}
+        rows={3}
+        placeholder="TAMBAHKAN CATATAN ATAU KOMENTAR..."
+      />
+
+      <div className="flex flex-col md:flex-row gap-4 pt-6 border-t-2 border-black">
+        <Button type="submit" disabled={loading} fullWidth variant="success">
+          {loading ? "MENYIMPAN..." : "SIMPAN PERUBAHAN"}
+        </Button>
+        <Link href="/dashboard" className="flex-1">
+          <Button fullWidth variant="secondary">BATAL MODIFIKASI</Button>
         </Link>
       </div>
     </form>
