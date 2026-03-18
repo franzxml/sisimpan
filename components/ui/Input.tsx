@@ -4,6 +4,7 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement | HTMLTe
   label: string;
   error?: string;
   as?: "input" | "textarea";
+  rows?: number;
 }
 
 export const Input: React.FC<InputProps> = ({
@@ -12,6 +13,7 @@ export const Input: React.FC<InputProps> = ({
   as = "input",
   className = "",
   id,
+  rows,
   ...props
 }) => {
   const inputStyles = `w-full border-2 border-black bg-[#F4F4F4] px-4 py-3 text-sm font-bold uppercase placeholder:opacity-30 focus:bg-white focus:outline-none disabled:opacity-50 ${
@@ -28,6 +30,7 @@ export const Input: React.FC<InputProps> = ({
         <textarea
           id={id}
           className={inputStyles}
+          rows={rows}
           {...(props as React.TextareaHTMLAttributes<HTMLTextAreaElement>)}
         />
       ) : (
