@@ -10,7 +10,7 @@ export const Footer: React.FC<FooterProps> = ({
   statusText = `©franzxml | SISIMPAN OS LOG STAMP ${new Date().getFullYear()}`
 }) => {
   return (
-    <footer className="mx-auto w-full max-w-[1400px] border-x-0 md:border-x-2 border-black bg-white p-6 md:p-16 mt-12">
+    <footer className="mx-auto w-full max-w-[1400px] border-t-2 md:border-x-2 border-black bg-white p-6 md:p-16 mt-12">
       {showDetails && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12 mb-16 md:mb-24">
           <div className="sm:col-span-2">

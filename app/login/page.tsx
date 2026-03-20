@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/Button";
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState("");
   const [fieldErrors, setFieldErrors] = useState<{ email?: string; password?: string }>({});
   const [loading, setLoading] = useState(false);
@@ -42,6 +43,7 @@ export default function LoginPage() {
     const formData = new FormData();
     formData.append("email", email);
     formData.append("password", password);
+    formData.append("rememberMe", rememberMe.toString());
 
     const result = await login(formData);
 
@@ -72,7 +74,7 @@ export default function LoginPage() {
 
           <form onSubmit={handleSubmit} noValidate className="space-y-6">
             <Input
-              label="Email Address"
+              label="ALAMAT EMAIL"
               type="email"
               value={email}
               error={fieldErrors.email}
@@ -86,10 +88,11 @@ export default function LoginPage() {
 
             <div className="space-y-1">
               <Input
-                label="Password Key"
+                label="KATA SANDI"
                 type="password"
                 value={password}
                 error={fieldErrors.password}
+                showTogglePassword={true}
                 onChange={(e) => {
                   setPassword(e.target.value);
                   if (fieldErrors.password) setFieldErrors(prev => ({ ...prev, password: undefined }));
@@ -97,7 +100,23 @@ export default function LoginPage() {
                 disabled={loading}
                 placeholder="••••••••"
               />
-              <div className="text-right">
+              <div className="flex items-center justify-between mt-2">
+                <label className="flex items-center gap-2 cursor-pointer group">
+                  <div className="relative">
+                    <input 
+                      type="checkbox" 
+                      checked={rememberMe}
+                      onChange={(e) => setRememberMe(e.target.checked)}
+                      className="sr-only peer"
+                      disabled={loading}
+                    />
+                    <div className="h-5 w-5 border-2 border-black bg-white transition-all peer-checked:bg-blue-600 group-hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"></div>
+                    <svg className="absolute top-0.5 left-0.5 h-4 w-4 text-white opacity-0 transition-opacity peer-checked:opacity-100" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="4">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                    </svg>
+                  </div>
+                  <span className="text-[10px] font-black uppercase">Ingat Saya</span>
+                </label>
                 <a 
                   href="mailto:ignfranzx@gmail.com?subject=Permintaan%20Ubah%20Kata%20Sandi%20Sisimpan&body=Halo%2C%20saya%20ingin%20meminta%20perubahan%20kata%20sandi%20untuk%20akun%20Sisimpan%20saya."
                   className="text-[10px] font-black uppercase text-blue-600 hover:underline"

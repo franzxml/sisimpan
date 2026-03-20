@@ -5,7 +5,6 @@ import { tambahHiburan } from "@/app/lib/actions";
 import Link from "next/link";
 import { PageLayout } from "@/components/PageLayout";
 import { Header } from "@/components/Header";
-import { Footer } from "@/components/Footer";
 import { Input } from "@/components/ui/Input";
 import { Select } from "@/components/ui/Select";
 import { Button } from "@/components/ui/Button";
@@ -24,11 +23,7 @@ export default function TambahHiburanPage() {
 
     if (!tipe) errors.tipe = "TIPE TIDAK BOLEH KOSONG!";
     if (!nama) errors.nama = "NAMA TIDAK BOLEH KOSONG!";
-    if (!link) {
-      errors.link = "LINK TIDAK BOLEH KOSONG!";
-    } else {
-        try { new URL(link); } catch { errors.link = "FORMAT URL TIDAK VALID!"; }
-    }
+    if (!link) errors.link = "LINK TIDAK BOLEH KOSONG!";
     if (!pemilik) errors.pemilik = "PEMILIK TIDAK BOLEH KOSONG!";
 
     setFieldErrors(errors);
@@ -56,7 +51,7 @@ export default function TambahHiburanPage() {
   return (
     <PageLayout>
       <Header 
-        subtitle="INPUT SYSTEM V.2 DATABASE HIBURAN" 
+        subtitle="SISTEM INPUT V.2 DATABASE HIBURAN" 
         rightElement={
           <Link href="/dashboard">
             <Button variant="secondary" className="py-1 px-3 text-[10px] md:text-sm">KE DASHBOARD</Button>
@@ -75,24 +70,24 @@ export default function TambahHiburanPage() {
 
           {error && (
             <div className="mb-6 border-2 border-black bg-red-100 p-3 text-[10px] md:text-xs font-bold uppercase text-red-600">
-              [SYSTEM ERROR]: {error}
+              [KESALAHAN SISTEM]: {error}
             </div>
           )}
 
           <form onSubmit={handleSubmit} noValidate className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <Input
-                label="Module Type"
+                label="Tipe Modul"
                 name="tipe"
                 id="tipe"
                 disabled={loading}
                 error={fieldErrors.tipe}
                 onChange={() => fieldErrors.tipe && setFieldErrors(prev => ({ ...prev, tipe: undefined }))}
-                placeholder="Anime / Game / Movie"
+                placeholder="Anime / Game / Film"
               />
 
               <Input
-                label="Item Name"
+                label="Nama Item"
                 name="nama"
                 id="nama"
                 disabled={loading}
@@ -103,10 +98,9 @@ export default function TambahHiburanPage() {
             </div>
 
             <Input
-              label="Source Link"
+              label="Tautan Sumber"
               name="link"
               id="link"
-              type="url"
               disabled={loading}
               error={fieldErrors.link}
               onChange={() => fieldErrors.link && setFieldErrors(prev => ({ ...prev, link: undefined }))}
@@ -115,7 +109,7 @@ export default function TambahHiburanPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <Input
-                label="Owner Sign"
+                label="Nama Pemilik"
                 name="pemilik"
                 id="pemilik"
                 disabled={loading}
@@ -125,7 +119,7 @@ export default function TambahHiburanPage() {
               />
 
               <Select
-                label="Progress Status"
+                label="Status Progres"
                 name="status"
                 id="status"
                 disabled={loading}
@@ -138,7 +132,7 @@ export default function TambahHiburanPage() {
             </div>
 
             <Input
-              label="Log Comment (Optional)"
+              label="Catatan Komentar (Opsional)"
               name="komentar"
               id="komentar"
               as="textarea"
@@ -152,14 +146,12 @@ export default function TambahHiburanPage() {
                 {loading ? "MENYIMPAN..." : "SIMPAN DATA"}
               </Button>
               <Link href="/dashboard" className="flex-1">
-                <Button fullWidth variant="secondary">KEMBALI DASHBOARD</Button>
+                <Button fullWidth variant="secondary">KEMBALI KE DASHBOARD</Button>
               </Link>
             </div>
           </form>
         </div>
       </main>
-
-      <Footer statusText="SYS READY FOR INPUT DATA" />
     </PageLayout>
   );
 }

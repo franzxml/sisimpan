@@ -4,6 +4,7 @@ import { sql } from "@/lib/db";
 import bcrypt from "bcryptjs";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
+import { cookies } from "next/headers";
 
 export async function register(formData: FormData) {
   const name = formData.get("name") as string;
@@ -51,6 +52,7 @@ export async function register(formData: FormData) {
 export async function login(formData: FormData) {
   const email = formData.get("email") as string;
   const password = formData.get("password") as string;
+  const rememberMe = formData.get("rememberMe") === "true";
 
   // Mencari user berdasarkan email
   const [user] = await sql`
@@ -68,8 +70,35 @@ export async function login(formData: FormData) {
     return { error: "Email atau kata sandi salah!" };
   }
 
+  // Set session cookie
+  const expiresAt = rememberMe 
+    ? new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) // 30 hari
+    : new Date(Date.now() + 24 * 60 * 60 * 1000);    // 1 hari
+
+  (await cookies()).set("session", user.id.toString(), {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    expires: expiresAt,
+    sameSite: "lax",
+    path: "/",
+  });
+
   // Jika berhasil, arahkan ke halaman dashboard
   redirect("/dashboard");
+}
+
+export async function getSession() {
+  const sessionId = (await cookies()).get("session")?.value;
+  if (!sessionId) return null;
+
+  try {
+    const [user] = await sql`
+      SELECT id, name, email FROM users WHERE id = ${sessionId}
+    `;
+    return user || null;
+  } catch (error) {
+    return null;
+  }
 }
 
 export async function tambahHiburan(formData: FormData) {
@@ -184,6 +213,19 @@ export async function editHiburan(id: number, formData: FormData) {
   redirect("/dashboard");
 }
 
+export async function deleteHiburan(id: number) {
+  try {
+    await sql`
+      DELETE FROM hiburan WHERE id = ${id}
+    `;
+    revalidatePath("/dashboard");
+    return { success: true };
+  } catch (error: any) {
+    console.error("Delete Hiburan Error:", error);
+    return { error: "Gagal menghapus hiburan. Silakan coba lagi." };
+  }
+}
+
 export async function updateStatusAction(formData: FormData) {
   const idStr = formData.get("id") as string;
   const status = formData.get("status") as string;
@@ -207,5 +249,6 @@ export async function updateStatusAction(formData: FormData) {
 }
 
 export async function logout() {
+  (await cookies()).delete("session");
   redirect("/");
 }

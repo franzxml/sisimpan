@@ -12,6 +12,7 @@ export default function RegisterPage() {
   const [error, setError] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<{ name?: string; email?: string; password?: string; confirmPassword?: string }>({});
   const [isLoading, setIsLoading] = useState(false);
+  const [showPasswords, setShowPasswords] = useState(false);
 
   const validate = (formData: FormData) => {
     const errors: { name?: string; email?: string; password?: string; confirmPassword?: string } = {};
@@ -74,13 +75,13 @@ export default function RegisterPage() {
 
           {error && (
             <div className="mb-6 border-2 border-black bg-red-100 p-3 text-[10px] md:text-xs font-bold uppercase text-red-600">
-              [SYSTEM ERROR]: {error}
+              [KESALAHAN SISTEM]: {error}
             </div>
           )}
 
           <form onSubmit={handleSubmit} noValidate className="space-y-6">
             <Input
-              label="Full Name"
+              label="Nama Lengkap"
               name="name"
               type="text"
               disabled={isLoading}
@@ -90,7 +91,7 @@ export default function RegisterPage() {
             />
 
             <Input
-              label="Email Address"
+              label="Alamat Email"
               name="email"
               type="email"
               disabled={isLoading}
@@ -100,9 +101,12 @@ export default function RegisterPage() {
             />
 
             <Input
-              label="Password Key"
+              label="Kata Sandi"
               name="password"
               type="password"
+              showTogglePassword={true}
+              externalShowPassword={showPasswords}
+              onTogglePassword={setShowPasswords}
               disabled={isLoading}
               error={fieldErrors.password}
               onChange={() => fieldErrors.password && setFieldErrors(prev => ({ ...prev, password: undefined }))}
@@ -110,9 +114,10 @@ export default function RegisterPage() {
             />
 
             <Input
-              label="Confirm Password"
+              label="Konfirmasi Kata Sandi"
               name="confirmPassword"
               type="password"
+              externalShowPassword={showPasswords}
               disabled={isLoading}
               error={fieldErrors.confirmPassword}
               onChange={() => fieldErrors.confirmPassword && setFieldErrors(prev => ({ ...prev, confirmPassword: undefined }))}

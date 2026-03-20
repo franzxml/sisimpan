@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Sisimpan - Solusi Aman Penyimpanan Aset Digital",
-  description: "Kelola dan amankan aset digital Anda dengan enkripsi standar industri. Cepat, aman, dan terpercaya.",
+  title: "Sisimpan",
+  description: "Mencatat dan Mengelola daftar hiburan Anda.",
 };
 
 export default function RootLayout({

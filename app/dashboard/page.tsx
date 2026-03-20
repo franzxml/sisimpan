@@ -1,12 +1,17 @@
 import Link from "next/link";
-import { getHiburan, logout } from "@/app/lib/actions";
+import { getHiburan, logout, getSession } from "@/app/lib/actions";
 import { PageLayout } from "@/components/PageLayout";
 import { Header } from "@/components/Header";
-import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/Button";
 import { HiburanCard } from "./HiburanCard";
+import { redirect } from "next/navigation";
 
 export default async function DashboardPage() {
+  const session = await getSession();
+  if (!session) {
+    redirect("/login");
+  }
+
   const hiburanList = await getHiburan();
 
   const getStatusLabel = (status: string) => {
@@ -91,8 +96,6 @@ export default async function DashboardPage() {
           )}
         </div>
       </main>
-
-      <Footer statusText={`©franzxml | SISIMPAN OS LOG STAMP ${new Date().getFullYear()}`} />
     </PageLayout>
   );
 }

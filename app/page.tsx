@@ -3,8 +3,15 @@ import { PageLayout } from "@/components/PageLayout";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/Button";
+import { getSession } from "@/app/lib/actions";
+import { redirect } from "next/navigation";
 
-export default function Home() {
+export default async function Home() {
+  const session = await getSession();
+  if (session) {
+    redirect("/dashboard");
+  }
+
   return (
     <PageLayout>
       <Header showNav />
@@ -128,10 +135,10 @@ export default function Home() {
               <p className="text-[10px] md:text-xs font-bold uppercase mb-8 opacity-80">Mulai organisir daftar hiburan Anda dengan mendaftarkan akun atau masuk ke sistem hari ini.</p>
               <div className="flex flex-col sm:flex-row gap-4">
                  <Link href="/login" className="flex-1">
-                    <Button fullWidth variant="secondary" className="bg-black text-white hover:bg-white hover:text-black shadow-none py-3">LOGIN</Button>
+                    <Button fullWidth variant="primary" className="shadow-none py-3">MASUK</Button>
                  </Link>
                  <Link href="/daftar" className="flex-1">
-                    <Button fullWidth variant="secondary" className="bg-blue-600 text-white hover:bg-black border-black py-3 shadow-none">DAFTAR</Button>
+                    <Button fullWidth variant="primary" className="bg-blue-600 hover:bg-black border-black py-3 shadow-none">DAFTAR</Button>
                  </Link>
               </div>
            </div>

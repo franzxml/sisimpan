@@ -1,6 +1,7 @@
 import Link from "next/link";
 import React from "react";
 import StatusSelector from "./StatusSelector";
+import { DeleteButton } from "./DeleteButton";
 
 interface HiburanCardProps {
   item: any;
@@ -10,7 +11,7 @@ interface HiburanCardProps {
 
 export const HiburanCard: React.FC<HiburanCardProps> = ({ item, getStatusLabel, getStatusColor }) => {
   return (
-    <div className="border-4 border-black bg-white p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 transition-all flex flex-col group">
+    <div className="border-4 border-black bg-white p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 transition-[transform,box-shadow,background-color] duration-200 flex flex-col group will-change-transform">
       <div className="flex justify-between items-start mb-6 pb-4 border-b-2 border-black/10">
         <span className="text-[10px] font-black uppercase border-2 border-black px-2 py-0.5 bg-[#F4F4F4]">
           MOD TYPE: {item.tipe.toUpperCase()}
@@ -35,7 +36,7 @@ export const HiburanCard: React.FC<HiburanCardProps> = ({ item, getStatusLabel, 
       )}
       
       <div className="mt-auto">
-        <div className="flex justify-between items-center mb-4">
+        <div className="flex flex-wrap gap-2 justify-between items-center mb-4">
           <a
             href={item.link}
             target="_blank"
@@ -44,12 +45,15 @@ export const HiburanCard: React.FC<HiburanCardProps> = ({ item, getStatusLabel, 
           >
             BUKA LINK ↗
           </a>
-          <Link
-            href={`/edit-hiburan/${item.id}`}
-            className="text-[10px] font-black uppercase border-2 border-black px-3 py-1.5 hover:bg-black hover:text-white transition-all shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:shadow-none active:translate-x-[1px] active:translate-y-[1px]"
-          >
-            EDIT DATA
-          </Link>
+          <div className="flex gap-2">
+            <Link
+              href={`/edit-hiburan/${item.id}`}
+              className="text-[10px] font-black uppercase border-2 border-black px-3 py-1.5 hover:bg-black hover:text-white transition-all shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:shadow-none active:translate-x-[1px] active:translate-y-[1px]"
+            >
+              EDIT
+            </Link>
+            <DeleteButton id={item.id} />
+          </div>
         </div>
         
         <StatusSelector id={item.id} initialStatus={item.status} />
